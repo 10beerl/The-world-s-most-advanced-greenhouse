@@ -1,0 +1,98 @@
+// import the libary for the digital humidity and temperature sensor
+#include "DHT.h"  
+
+
+// Declare the humidity and temperature sensor at Analog pin A3
+DHT sensor(A3, DHT11); 
+
+
+// Define the sensor pins for the the moisture sensors
+#define Sensor1Pin A0 
+#define Sensor2Pin A1
+
+
+//declare the variables that will hold the sensor readings
+float sensor1Value = 0;
+float sensor2Value =0 ;
+float sensor_temp;
+float sensor_humi;
+      
+    
+void setup( )
+{
+    //Start the serial buss and declare the digital pins 4 and 5 to be outputs for the pumps
+    Serial.begin(9600);
+    pinMode(5, OUTPUT);
+    pinMode(4, OUTPUT);
+
+
+    //turn the humidity and temperature sensor on
+    sensor.begin();
+}
+
+
+// the main block of code is a function that continues until the system is off
+void loop( )
+{
+  //Read the analog values that are at the moisture sensor locations
+    sensor1Value = analogRead(Sensor1Pin);
+    sensor2Value = analogRead(Sensor2Pin);
+  
+  //Read the digital values that are at the humidity and temperature sensor
+  
+     // Read DHT temperature and humidity values for Sensor-1
+    sensor_temp = sensor.readTemperature();
+    sensor_humi = sensor.readHumidity();
+
+    
+    //print the sensor readings to the console
+    Serial.print("Sensor Readings:  ");
+    Serial.print(sensor_temp,1); 
+    Serial.print("Degrees C  ");
+    Serial.print(sensor_humi,1);
+    Serial.println("% Air Saturation");
+    Serial.println();
+
+   
+
+    
+    //convert the sensor values into a percentage
+    sensor1Value = sensor1Value/100;
+    sensor2Value = sensor2Value/100;
+
+
+
+    //print the sensor values to the console 
+    Serial.print(sensor1Value);
+    Serial.println(" Sensor 1 Soil sauration");
+    Serial.print(sensor2Value);
+    Serial.println(" Sensor 2 Soil sauration");
+
+    
+    
+    
+ //When sensor 1 detects the mousture is low, the pump will turn on of 2 seconds  
+
+    if (sensor1Value> 5){
+    digitalWrite(5,LOW);// turn relay On
+    delay(2000);
+    digitalWrite(5,HIGH);
+    delay(2000);
+    } else{
+    digitalWrite(5, HIGH);// turn relay OFF
+    }
+
+//When sensor 2 detects the mousture is low, the pump will turn on of 2 seconds
+    
+    if (sensor2Value > 5){
+    digitalWrite(4,LOW);// turn relay On
+    delay(2000);
+    digitalWrite(4,HIGH);
+    delay(2000);
+    } else{
+    digitalWrite(4, HIGH);// turn relay OFF
+    }
+  }
+  
+
+  
